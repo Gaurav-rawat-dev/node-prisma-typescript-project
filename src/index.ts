@@ -1,6 +1,7 @@
 
 import express, { Request, Response, Express } from "express";
 import { PrismaClient } from "../generated/prisma/index.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
 
 
 import rootRouter from "./routes/index.js";
@@ -19,6 +20,9 @@ app.use("/api", rootRouter)
 app.get("/", (req:Request, res: Response)=>{
   res.send("working app")
 })
+
+// @ts-ignore
+app.use(errorHandler)
 
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
