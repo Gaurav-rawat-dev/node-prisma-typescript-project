@@ -17,9 +17,6 @@ export const prismaClient = new PrismaClient({
 })
 app.use(express.json())
 app.use("/api", rootRouter)
-app.get("/", (req:Request, res: Response)=>{
-  res.send("working app")
-})
 
 // @ts-ignore
 app.use(errorHandler)
