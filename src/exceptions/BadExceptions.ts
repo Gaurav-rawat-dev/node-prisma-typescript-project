@@ -1,4 +1,4 @@
-import { ErrorCode, HttpExceptions } from "../exceptions/root";
+import { ErrorCode, HttpExceptions } from "./root";
 
 export class UnauthorizedException extends HttpExceptions {
   constructor(message: string, errorCode: ErrorCode, errors: any = null) {

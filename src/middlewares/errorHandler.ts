@@ -9,7 +9,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
       // const status = typeof err.status === "number" ? err.status : 500;
 
        // @ts-ignore
-      res.status(err.statusCode).json({
+      return res.status(err.statusCode).json({
         message: err.message || "Something went wrong",
         errorCode: err.errorCode || "UNKNOWN_ERROR",
         statusCode: err.statusCode,
@@ -18,7 +18,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     } else {
       // For other types of errors (e.g., default errors from express or third-party libs)
       // @ts-ignore 
-      res.status(500).json({
+      return res.status(500).json({
         message: "Internal Server Error",
         errorCode: "UNKNOWN_ERROR",
         status: 500,
