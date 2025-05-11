@@ -26,3 +26,14 @@ model User {
 
   @@map("users")
 }
+
+model Otp {
+  id         Int      @id @default(autoincrement())
+  email      String
+  otp        String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@unique([email, otp])
+  @@index([expiresAt])
+}
