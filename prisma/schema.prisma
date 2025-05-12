@@ -21,6 +21,7 @@ model User {
   email    String @unique
   password String
   role     ROLE @default(USER)
+  address  Address[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -54,4 +55,18 @@ model Product {
   updatedAt DateTime @updatedAt
 
 @@map("products")
+}
+
+
+model  Address {
+  id Int @id @default(autoincrement())
+  lineone String
+  linetwo String
+  city String
+  country String
+  pincode String
+  userId Int
+  user  User @relation(fields : [userId], references : [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

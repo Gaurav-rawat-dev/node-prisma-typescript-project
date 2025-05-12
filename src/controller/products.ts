@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { prismaClient } from "..";
-import { InternalServerException } from "../exceptions/BadExceptions";
+import { InternalServerException, NotFoundException } from "../exceptions/BadExceptions";
 import { ErrorCode } from "../exceptions/root";
 
 
@@ -71,7 +71,7 @@ export const updateProduct = async (req: Request, res: Response, next: NextFunct
 
 
 export const getProduct = async (
-  req: Request, // typed query params
+  req: Request, 
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -97,13 +97,14 @@ export const getProduct = async (
       data: products,
     });
   } catch (error) {
-    next(error); // Let your centralized error handler deal with it
+    throw new NotFoundException("product not found", ErrorCode.PRODUCT_NOT_FOUND)
   }
 };
 
 
 export const getProductByID = async (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params
+ try {
+   const { id } = req.params
   const product = await prismaClient.product.findFirst({
     where: {
       id: +id
@@ -114,5 +115,8 @@ export const getProductByID = async (req: Request, res: Response, next: NextFunc
     message: "Producted listed.",
     data: product
   })
+ } catch (error) {
+  throw new NotFoundException("product not found", ErrorCode.PRODUCT_NOT_FOUND)
+ }
 
 }
