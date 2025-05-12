@@ -1,6 +1,8 @@
 import {Router} from "express"
 import { errorHandler } from "../error-handler"
-import { signup, login } from "../controller/auth"
+import { signup, login, test } from "../controller/auth"
+import { auth } from "../middlewares/auth-middleware"
+
 
 const authRoutes:Router =Router()
 

@@ -20,11 +20,16 @@ model User {
   name     String
   email    String @unique
   password String
-
+  role     ROLE @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+
+enum ROLE {
+  ADMIN
+  USER
 }
 
 model Otp {
@@ -36,4 +41,17 @@ model Otp {
 
   @@unique([email, otp])
   @@index([expiresAt])
+}
+
+
+model Product {
+  id Int @id @default(autoincrement())
+  name String
+  description String @db.Text
+  price Decimal
+  tags String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+@@map("products")
 }
