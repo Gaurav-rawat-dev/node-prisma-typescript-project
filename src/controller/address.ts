@@ -1,9 +1,11 @@
 import { Request, Response } from "express"
-import { addressSchema } from "../schema/address"
+import { addressSchema, updateUserSchema } from "../schema/address"
 import { prismaClient } from ".."
-import { InternalServerException, NotFoundException } from "../exceptions/BadExceptions"
+import { InternalServerException, InvalidInputExceptions, NotFoundException } from "../exceptions/BadExceptions"
 import { ErrorCode } from "../exceptions/root"
 import { error } from "console"
+import { Address } from "cluster"
+import { any } from "zod"
 addressSchema
 
 export const addAddress = async (req: Request, res: Response) => {
@@ -58,3 +60,49 @@ export const listAddress = async (req: Request, res: Response) => {
         data : addresses
     })
 } 
+
+export const updateUserAddress = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const validatedInputs = updateUserSchema.parse(req.body);
+    const dataToUpdate : any = {}
+
+    // Validate and retrieve the shipping address
+    let defaultShippingAddress: Address | undefined;
+    if (validatedInputs.defaultShippingAddress) {
+      defaultShippingAddress = await prismaClient.address.findFirstOrThrow({
+        where: { id: +validatedInputs.defaultShippingAddress },
+      });
+      dataToUpdate.defaultShippingAddress = +validatedInputs.defaultShippingAddress
+    }
+
+    // Validate and retrieve the billing address
+    let defaultBillingAddress: Address | undefined;
+    if (validatedInputs.defaultBillingAddress) {
+      defaultBillingAddress = await prismaClient.address.findFirstOrThrow({
+        where: { id: +validatedInputs.defaultBillingAddress },
+      });
+      dataToUpdate.defaultBillingAddress = +validatedInputs.defaultBillingAddress
+    }
+
+    
+    
+
+    // Update the user
+    const user = await prismaClient.user.update({
+      where: { id: +req.user.id },
+      data: {
+        ...dataToUpdate
+      }
+      
+    });
+
+    res.status(200).json({
+      message: "User updated successfully",
+      data: user,
+    });
+
+  } catch (error) {
+    console.error(error);
+    throw new InvalidInputExceptions("Invalid input or address not found", ErrorCode.INVALID_INPUTS, error);
+  }
+};
